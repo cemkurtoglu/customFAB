@@ -2,9 +2,12 @@ package com.cemkurtoglu.fabmenu;
 
 import android.os.Bundle;
 import android.transition.Fade;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
@@ -15,11 +18,13 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.search_activity);
-        String currentFragment = getIntent().getExtras().getString("current fragment"); // To identify the fragment that we are at
+        setContentView(R.layout.activity_search);
         initView();
         initTransitionSettings();
+//        String currentFragment = getIntent().getExtras().getString("current fragment"); // To identify the fragment that we are at
+
     }
+
 
     private void initView(){
         AppCompatEditText searchView = findViewById(R.id.searchBar);
@@ -27,7 +32,7 @@ public class SearchActivity extends AppCompatActivity {
         searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+               getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
         });
 
@@ -44,6 +49,7 @@ public class SearchActivity extends AppCompatActivity {
         getWindow().setExitTransition(fade);
 
     }
+
 
     @Override
     public void onBackPressed() {

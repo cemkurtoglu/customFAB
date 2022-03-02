@@ -42,7 +42,7 @@ public class FabMenu {
         initView();
         initFab();
         initOnFabBlackOutClick();
-//        initOnSearchClick(context);
+        initOnSearchClick(context);
         initFragmentButtons(homeButton);
         initFragmentButtons(statisticsButton);
         initFragmentButtons(profileButton);
@@ -306,7 +306,7 @@ public class FabMenu {
 //            @Override
 //            public void onClick(View v) {
 //
-//                Intent intent = new Intent(activity, SearchActivity.class);
+//                Intent intent = new Intent(activity, SearchFragment.class);
 //                intent.putExtra("current fragment",fragmentTag);
 //                ActivityOptionsCompat optionsCompat
 //                        = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, searchButton, "shared_element_searchbar");
