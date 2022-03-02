@@ -21,7 +21,6 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
         initView();
         initTransitionSettings();
-//        String currentFragment = getIntent().getExtras().getString("current fragment"); // To identify the fragment that we are at
 
     }
 
