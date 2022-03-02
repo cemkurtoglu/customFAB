@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -30,26 +31,21 @@ public class FabMenu {
     private boolean isMenuClosed;
     private int searchButtonWidth;
     private String fragmentTag = null;
+    private CustomFabMenu customFabMenu;
 
 
-    /**
-     * @author Cem
-     * This is a custom written FabMenu class that is designed to implement on an Activity that extends it's {@link FabMenuAppCompatActivity}
-     * FabMenuAppCompatActivity contains three fragment objects that needs to be changed for different uses. //TO DO//
-     * @param context
-     */
 
-
-    public FabMenu(FabMenuAppCompatActivity context) {
+    public FabMenu(AppCompatActivity context, CustomFabMenu customFabMenu) {
         rootView = LayoutInflater.from(context).inflate(R.layout.fab_layout,null,false);
         resources = context.getResources();
+        this.customFabMenu = customFabMenu;
         initView();
         initFab();
         initOnFabBlackOutClick();
-        initOnSearchClick(context);
-        initFragmentButtons(context,homeButton);
-        initFragmentButtons(context,statisticsButton);
-        initFragmentButtons(context,profileButton);
+//        initOnSearchClick(context);
+        initFragmentButtons(homeButton);
+        initFragmentButtons(statisticsButton);
+        initFragmentButtons(profileButton);
     }
 
     public View getRootView(){
@@ -99,7 +95,13 @@ public class FabMenu {
             public void onClick(View v) {
                 if (isMenuClosed) {
                     menuOpen();
+                    Log.e("mainButton clicked","opened");
+                    Log.e("mainButton id", String.valueOf(mainButton.getId()));
+
                 } else {
+                    Log.e("mainButton clicked","closed");
+                    Log.e("mainButton id", String.valueOf(mainButton.getId()));
+
                     menuClose();
                 }
             }
@@ -267,19 +269,50 @@ public class FabMenu {
         anim.setDuration(400);
         anim.start();
     }
+    public void setSelectedItemId(@IdRes int itemId) {
+        View item = findItem(itemId);
+        if (item != null) {
+            item.performClick();
+        }
+    }
 
-    private void initOnSearchClick(FabMenuAppCompatActivity activity){
+    private View findItem(int itemID){
+
+        try {
+            if(homeButton.getId() == itemID){
+                return homeButton;
+            }else if(statisticsButton.getId() ==itemID){
+                return statisticsButton;
+            }else if(profileButton.getId() == itemID){
+                return profileButton;
+            }
+        } catch (Exception e){
+            Log.e("Illegal Request: ", "You can only select home, statistics or profile fragments as initial page.");
+        }
+        return null;
+    }
+
+    private void initOnSearchClick(AppCompatActivity activity){
+
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(activity, SearchActivity.class);
-                intent.putExtra("current fragment",fragmentTag);
-                ActivityOptionsCompat optionsCompat
-                        = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, searchButton, "shared_element_searchbar");
-                activity.startActivity(intent, optionsCompat.toBundle());
+                customFabMenu.onFabItemClick(searchButton);
             }
         });
+
+
+//        searchButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                Intent intent = new Intent(activity, SearchActivity.class);
+//                intent.putExtra("current fragment",fragmentTag);
+//                ActivityOptionsCompat optionsCompat
+//                        = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, searchButton, "shared_element_searchbar");
+//                activity.startActivity(intent, optionsCompat.toBundle());
+//            }
+//        });
 
     }
 
@@ -288,6 +321,9 @@ public class FabMenu {
         fabBlackOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e("fabBlackOut clicked","close menu");
+                Log.e("mainButton id", String.valueOf(fabBlackOut.getId()));
+
                 menuClose();
             }
 
@@ -296,59 +332,44 @@ public class FabMenu {
 
 
 
-    private void initFragmentButtons(FabMenuAppCompatActivity activity,FloatingActionButton button){
+    private void initFragmentButtons(FloatingActionButton button){
 
-        Fragment currentFragment = null;
-        if (button == profileButton){
-            currentFragment = activity.getProfileFragment();
-            fragmentTag = "Profile Fragment";
-        } else if (button == statisticsButton){
-            currentFragment = activity.getGraphFragment();
-            fragmentTag = "Statistics Fragment";
-        } else if (button == homeButton){
-            currentFragment = activity.getHomeFragment();
-            fragmentTag = "Home Fragment";
-        } else{
-            Log.e("initFragment Error","Wrong button input");
-        }
-
-        Fragment finalCurrentFragment = currentFragment;
-        String finalTag = fragmentTag;
+//        Fragment currentFragment = null;
+//        if (button == profileButton){
+//            currentFragment = activity.getProfileFragment();
+//            fragmentTag = "Profile Fragment";
+//        } else if (button == statisticsButton){
+//            currentFragment = activity.getGraphFragment();
+//            fragmentTag = "Statistics Fragment";
+//        } else if (button == homeButton){
+//            currentFragment = activity.getHomeFragment();
+//            fragmentTag = "Home Fragment";
+//        } else{
+//            Log.e("initFragment Error","Wrong button input");
+//        }
+//
+//        Fragment finalCurrentFragment = currentFragment;
+//        String finalTag = fragmentTag;
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                activity.getSupportFragmentManager()
+//                        .beginTransaction()
+//                        .replace(R.id.main_fragment, finalCurrentFragment, finalTag)
+//                        .commit();
+//
+//                fragmentTag = finalTag;
+//
+//            }
+//        });
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                activity.getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.main_fragment, finalCurrentFragment, finalTag)
-                        .commit();
-
-                fragmentTag = finalTag;
-
+                customFabMenu.onFabItemClick(button);
             }
         });
     }
 
 }
 
-class FabMenuAppCompatActivity extends AppCompatActivity {
-
-    private final HomeFragment homeFragment = new HomeFragment();
-    private final ProfileFragment profileFragment = new ProfileFragment();
-    private final GraphFragment graphFragment = new GraphFragment();
-
-    ProfileFragment getProfileFragment() {
-        return profileFragment;
-    }
-
-    HomeFragment getHomeFragment(){
-        return homeFragment;
-    }
-
-    GraphFragment getGraphFragment() {
-        return graphFragment;
-    }
-
-
-
-}
