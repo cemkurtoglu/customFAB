@@ -1,4 +1,4 @@
-git # Custom Floating Action Bar with Transition Animation
+# Custom Floating Action Bar with Transition Animation
 
 This is a sample project to implement a custom FAB menu to your android application.
 
